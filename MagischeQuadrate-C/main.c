@@ -29,12 +29,18 @@ void create_magic_odd(int *pm, const int n);
  */
 int main(int argc, char** argv) {
     
-    const int n = 5;
+    const int n = 3;
     int *pm = malloc( n * n * sizeof( int ) );
     
     // initialize values
     for( int ix = 0; ix < n*n; ++ix ) {
         pm[ ix ] = 5;
+    }
+    
+    if(n == 3){
+        create_magic_3(pm, n);
+    } else {
+        puts("Magisches Quadrat mit n>3 noch nicht implementiert");
     }
 
     
@@ -42,7 +48,8 @@ int main(int argc, char** argv) {
         print_magic(pm, n);
         printf("\nMagische Zahl: %i", is_magic(pm, n));
     } else {
-        printf("Das Quadrat ist nicht magisch.");
+        print_magic(pm, n);
+        printf("\nDas Quadrat ist nicht magisch.");
     }
     
     // release memory
@@ -56,6 +63,7 @@ int main(int argc, char** argv) {
  */
 void print_magic ( const int *pm, const int n) {
     
+    puts("\nDas magische Quadrat:");
     for(int iR = 0; iR<n; iR++){
         
         for(int iC = 0; iC<n; iC++){
@@ -71,30 +79,30 @@ void print_magic ( const int *pm, const int n) {
 int is_magic( const int *pm, const int n) {
     int isMagic = 0;
     int szArray = n+n+2;
-    int *ps = malloc( sizeof(int) + szArray);
+    int *ps = malloc( szArray * sizeof(int));
     
     // initialize values
     for( int ix = 0; ix < szArray; ++ix ) {
         ps[ ix ] = 0;
     }
-    
+        
     // calculate sums
-    for(int iR = 0; iR<n; iR++){
+    for(int iR = 0; iR<n; iR++) {
+        ps[n+n] = ps[n+n] + pm[iR+iR*n]; // sum of diagonal 1
+        ps[n+n+1] = ps[n+n+1] + pm[iR*n+n-iR-1]; // sum of diagonal 2
+        
         for(int iC = 0; iC<n; iC++) {
             ps[iR] = ps[iR] + pm[iC+iR*n]; // sum of row
             ps[n+iR] = ps[n+iR] + pm[iC+iR*n]; // sum of column 
         }       
     }
-    
-    ps[szArray-1] = ps[0];
-    ps[szArray] = ps[0];
-    
+        
     // sum of all sums
     int sum = 0;
     for( int iS = 0; iS<szArray; iS++) {
-        printf("%i, ", ps[iS]);
         sum = sum + ps[iS];
     }
+    
     
     // check if all sums are equal
     if(sum/szArray == ps[0]) {
@@ -103,5 +111,24 @@ int is_magic( const int *pm, const int n) {
         isMagic = 0;
     }
     
+    free( ps );
+    
     return isMagic;
+}
+
+void create_magic_3(int *pm, const int n) {
+    int a = 1;
+    int b = 2;
+    int c = 3;
+    
+    // Magisches Quadrat
+    pm[0] = c - b;
+    pm[1] = c + a + b;
+    pm[2] = c - a;
+    pm[3] = c - a + b;
+    pm[4] = c;
+    pm[5] = c + a - b;
+    pm[6] = c + a;
+    pm[7] = c - a - b;
+    pm[8] = c + b;            
 }
